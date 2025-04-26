@@ -88,6 +88,7 @@ const login = async (req, res) => {
       token: token,
       expiresAt: expirationDate,
       role: user.role,
+      userId: user._id,
     });
   } catch (err) {
     console.error(err);
