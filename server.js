@@ -11,7 +11,7 @@ const CategoryService = require("./services/categoryService"); // Corrected path
 app.use(
   cors({
     origin: "http://localhost:3000",
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE","PATCH","OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true, // Allow cookies if needed
   })
@@ -38,11 +38,13 @@ mongoose
 const authRoutes = require("./routes/auth");
 const serviceCategoriesRoutes = require("./routes/serviceCategories");
 const userRoutes = require("./routes/userRoutes");
+const requestRoutes = require("./routes/requestRoutes"); // Assuming you have a requestRoutes.js file
 
 // Déclaration des routes
 app.use("/api", authRoutes);
 app.use("/api/service-categories", serviceCategoriesRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/requests", requestRoutes); // Assuming you have a requestRoutes.js file
 
 // Lancement du serveur
 app.listen(PORT, () => {
