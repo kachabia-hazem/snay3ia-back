@@ -57,9 +57,9 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { phone, password } = req.body;
 
-    const user = await User.findOne({ email: email });
+    const user = await User.findOne({ phone: phone });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -75,7 +75,7 @@ const login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { email: user.email, role: user.role },
+      { phone: user.phone, role: user.role },
       process.env.JWT_SECRET || "secret",
       { expiresIn: "15m" }
     );
