@@ -74,6 +74,10 @@ const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is not defined");
+    }
+
     const token = jwt.sign(
       { phone: user.phone, role: user.role },
       process.env.JWT_SECRET || "secret",
@@ -164,6 +168,50 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const authV = async (req, res, next) => {
+  try {
+    // Get token from header
+    const authHeader = req.header("Authorization");
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({
+        success: false,
+        message: "No token, authorization denied",
+      });
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+
+    // Verify the token
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is not defined");
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Find user by phone
+    const user = await User.findOne({ phone: decoded.phone });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Add user to request object
+    req.user = user;
+    next();
+  } catch (error) {
+    console.error("Auth middleware error:", error.message);
+    return res.status(401).json({
+      success: false,
+      message: "Token is not valid",
+      error: error.message, // Include the error message for debugging
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -172,4 +220,5 @@ module.exports = {
   getUserByRole,
   updateUser,
   deleteUser,
+  authV,
 };
