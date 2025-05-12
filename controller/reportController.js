@@ -54,7 +54,7 @@ const getClientReports = async (req, res) => {
     const clientId = req.user._id; // Use _id from the user object
     const data = await Report.find({ clientId }).populate(
       "workerId",
-      "name email"
+      "firstName lastName email phone"
     );
     res.json(data);
   } catch (error) {
@@ -68,7 +68,7 @@ const getWorkerReports = async (req, res) => {
     const workerId = req.user._id; // Use _id from the user object
     const data = await Report.find({ workerId }).populate(
       "clientId",
-      "name email"
+      "firstName lastName email phone"
     );
     res.json(data);
   } catch (error) {
